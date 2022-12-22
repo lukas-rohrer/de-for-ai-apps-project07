@@ -3,9 +3,6 @@ from typing import Dict, List
 
 from app import db
 from app.udaconnect.models import Person
-from app.udaconnect.schemas import PersonSchema
-from geoalchemy2.functions import ST_AsText, ST_Point
-
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("udaconnect-api")

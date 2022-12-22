@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: location-generator
+  name: location-generator
+spec:
+  ports:
+  - name: "5005"
+    port: 5005
+    targetPort: 5005
+    nodePort: 30004
+  selector:
+    service: location-generator
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: location-generator
+  name: location-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: location-generator
+  template:
+    metadata:
+      labels:
+        service: location-generator
+    spec:
+      containers:
+      - image: luroh/location-generator:latest
+        name: location-generator
+        imagePullPolicy: Always
+      restartPolicy: Always

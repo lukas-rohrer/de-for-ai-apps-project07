@@ -1,0 +1,8 @@
+Architecture decisions:
+The three chosen message passing technologies for this project are Kafka, REST APIs and gRPC.
+
+The Kafka meesage queue is used to ingest the location data. Kafka can fulfill the business requirements because it is able to handle the high volume and continous stream of data with its distributed architecture.
+
+REST APIs are used for the person API and the Connection API. REST APIs are straightforward to implement, are felxible and the industry standard.
+
+To generate the user locations a gRPC endpoint is used. Here we sacrifice some felxibility but gain some performance compared to a REST API. This could be neccessary to handle the large volume of locations data.

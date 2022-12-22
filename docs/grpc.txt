@@ -1,0 +1,12 @@
+gRPC Dokumentation:
+
+The data should follow the following protobuff schema
+
+message LocationMessage {
+    int32 person_id = 1;
+    String latitude = 2;
+    String longitude = 3;
+}
+
+To make a sample request run 
+modules/location_generator/writer.py

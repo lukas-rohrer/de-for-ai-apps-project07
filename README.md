@@ -29,6 +29,7 @@ We will be installing the tools that we'll need to use for getting our environme
 3. [Set up `kubectl`](https://rancher.com/docs/rancher/v2.x/en/cluster-admin/cluster-access/kubectl/)
 4. [Install VirtualBox](https://www.virtualbox.org/wiki/Downloads) with at least version 6.0
 5. [Install Vagrant](https://www.vagrantup.com/docs/installation) with at least version 2.0
+6. [Install helm](https://helm.sh/docs/intro/install/)
 
 ### Environment Setup
 To run the application, you will need a K8s cluster running locally and to interface with it via `kubectl`. We will be using Vagrant with VirtualBox to run K3s.
@@ -76,12 +77,20 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 Afterwards, you can test that `kubectl` works by running a command like `kubectl describe services`. It should not return any errors.
 
 ### Steps
+1. Deploy Kafka on Kubernetes Cluster using a helm chart
+- `helm repo add my-repo https://charts.bitnami.com/bitnami`
+- `helm install udaconnect my-repo/kafka`
+
 1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
 3. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
 4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
 5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
-6. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
+6. `kubectl apply -f deployment/connection-api.yaml` - Set up the connection API
+7. `kubectl apply -f deployment/person-api.yaml` - Set up the person API
+8. `kubectl apply -f deployment/location-generator.yaml` - Set up the location generator
+9. `kubectl apply -f deployment/location-ingestor.yaml` - Set up the location ingestor
+10. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 
@@ -96,6 +105,10 @@ These pages should also load on your web browser:
 * `http://localhost:30001/` - OpenAPI Documentation
 * `http://localhost:30001/api/` - Base path for API
 * `http://localhost:30000/` - Frontend ReactJS Application
+* `http://localhost:30002/` - OpenAPI Documentation for Persons API
+* `http://localhost:30002/api/` - Base path for Persons API
+* `http://localhost:30003/` - OpenAPI Documentation for Connections API
+* `http://localhost:30003/api/` - Base path for Connections API
 
 #### Deployment Note
 You may notice the odd port numbers being served to `localhost`. [By default, Kubernetes services are only exposed to one another in an internal network](https://kubernetes.io/docs/concepts/services-networking/service/). This means that `udaconnect-app` and `udaconnect-api` can talk to one another. For us to connect to the cluster as an "outsider", we need to a way to expose these services to `localhost`.
